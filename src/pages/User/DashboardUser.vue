@@ -8,32 +8,78 @@
             color="white"
             flat
             icon="sort"/> -->
-            <div class="col-sm-12 col-md-3">
-              <span class="text-h4 text-white text-weight-medium">
-                Farmer's
-                  <br v-if="this.$q.screen.xl">
-                Warehouse
+            <div class="col-sm-12 col-md-3 q-mt-md">
+              <span class="text-h4 text-white text-weight-bold">
+                Farmer's Warehouse
               </span>
             </div>
             <div class="col-sm-12 col-md-9 full-width">
-              <q-input
-                clearable
-                dark
-                filled
-                v-model="search"
-                dense
-                placeholder="Search" />
+              <div class="row q-pa-sm">
+                <div class="col-md-11 col-xs-10">
+                  <q-input
+                  size="16px"
+                  class="text-black"
+                  color="black"
+                  bg-color="white"
+                  filled
+                  v-model="search"
+                  dense
+                  placeholder="Search">
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                </q-input></div>
+                <q-space></q-space>
+                <div class="col-1 items-center flex flex-center">
+                  <q-btn-dropdown size="16px" color="white text-indigo-10" dropdown-icon="tune">
+                    <q-list>
+                      <q-item clickable v-close-popup >
+                        <q-item-section>
+                          <q-item-label>Beras</q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                      <q-item clickable v-close-popup >
+                        <q-item-section>
+                          <q-item-label>Sayur</q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                      <q-item clickable v-close-popup>
+                        <q-item-section>
+                          <q-item-label>Buah</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                </div>
+              </div>
             </div>
         </div>
       </q-toolbar>
     </q-header>
     <q-page-container>
-      <div class="column q-pt-xs">
+      <div class="row col-gutter-md q-mt-md q-pr-sm q-pl-sm q-mb-sm">
+      <div class="col-md-12 col-xs-12 col-lg-12">
+        <div class="row">
+          <div class="col-auto">
+            <div class="left blue"></div>
+          </div>
+          <div class="col">
+            <q-banner inline-actions class="text-blue-grey-14">
+              <div class="text-h6 text-bold">Produk Terbaru</div>
+              <div>Data produk terbaru Farmers House</div>
+            </q-banner>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="column ">
         <div class="row">
           <div
             v-for="i in 10"
             :key="i"
-            class="col-xs-12 col-md-2 q-pl-sm q-pb-sm">
+            class="col-xs-12 col-md-2 q-pl-sm q-pb-sm q-pr-sm q-pt-sm">
             <div
               clickable
               @click="dialog = true"
@@ -44,8 +90,12 @@
                   src="https://s2.bukalapak.com/img/76225256052/s-463-463/data.png.webp"/>
               </div>
               <div class="col-xs-8 col-md-12 q-pl-sm q-pt-sm">
-                <span class="text-h6" style="color: #383E58;">
-                  Beras Raja Udang
+                <span class="text-h6 text-weight-bolder" style="color: #000046;">
+                  Beras Radja Udang
+                </span>
+                <br>
+                <span class="text-h6 text-weight-bold" style="color: #383E58;">
+                  Rp.50.000,00
                 </span>
                 <br>
                 <q-icon
@@ -145,11 +195,12 @@ export default {
   /* height: 220px; */
   border-radius: 0px 0px 10px 10px;
   /* background: #383E56; */
-  background-image: linear-gradient(90.14deg, #01742f 10%, #6FA83F 100%);
-  /* background-image: url('../../assets/background.jpg'); */
+  background-image: linear-gradient(90.14deg, #141E30 10%, #243B55 100%);
+  /* background-image: url('../../assets/bck.jpg'); */
+  /* background-size: 100% 100%; */
 }
 .card {
-  border-radius: 10px 10px 10px 30px;
+  border-radius: 10px 10px 10px 10px;
   background: #FFFFFF;
   /* background-image: linear-gradient(238.14deg, #FFFFFF 24.95%, #C5D7BD 100%); */
 }
@@ -160,5 +211,11 @@ export default {
   border-radius: 30px 30px 0px 0px;
   background: #FFFFFF;
   /* background-image: linear-gradient(238.14deg, #FFFFFF 24.95%, #C5D7BD 100%); */
+}
+
+.left {
+  width: 5px;
+  height: 100%;
+  background-color: rgb(14, 14, 100);
 }
 </style>
