@@ -10,13 +10,16 @@ const routes = [
     path: '/login', name: 'login', component: () => import('pages/Guest/LoginAdmin.vue')
   },
   // {
-  //   path: '/',
-  //   component: () => import('layouts/LoginLayout.vue'),
-  //   children: [
-  //     { path: 'login', name: 'login', component: () => import('pages/Guest/LoginAdmin.vue') },
-  //     { path: 'register', name: 'register', component: () => import('pages/Guest/Register.vue') }
-  //   ]
+  //   path: '/admin', name: 'admin', component: () => import('pages/Admin/DashboardAdmin.vue')
   // },
+  {
+    path: '/',
+    component: () => import('layouts/AdminLayout.vue'),
+    children: [
+      { path: 'admin', name: 'login', component: () => import('pages/Admin/DashboardAdmin.vue') },
+      { path: 'input', name: 'register', component: () => import('pages/Admin/InputData.vue') }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it

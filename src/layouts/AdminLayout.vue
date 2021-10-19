@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-        <q-toolbar-title>TaniApp</q-toolbar-title>
+        <q-toolbar-title class="text-h6 text-bold">Farmer's Warehouse</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -29,7 +29,7 @@
             :key="nav.label"
             :to="nav.to"
             active-class="bg-primary text-white"
-            style="color: #03AC0E;"
+            style="color: #141E30"
             exact
             clickable>
             <q-item-section avatar>
