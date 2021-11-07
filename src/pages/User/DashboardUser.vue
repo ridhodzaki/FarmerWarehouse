@@ -8,7 +8,7 @@
             color="white"
             flat
             icon="sort"/> -->
-            <div class="col-sm-12 col-md-3 q-mt-md">
+            <div clikable @click="ToAdmin()" class="col-sm-12 col-md-4 q-mt-md">
               <span class="text-h4 text-white text-weight-bold">
                 Farmer's Warehouse
               </span>
@@ -17,18 +17,23 @@
               <div class="row q-pa-sm">
                 <div class="col-md-11 col-xs-10">
                   <q-input
-                  size="16px"
-                  class="text-black"
-                  color="black"
-                  bg-color="white"
-                  filled
-                  v-model="search"
-                  dense
-                  placeholder="Search">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input></div>
+                    @keyup.enter="getBarangbySearch"
+                    size="16px"
+                    class="text-black"
+                    color="black"
+                    bg-color="white"
+                    filled
+                    v-model="search"
+                    dense
+                    placeholder="Search">
+                    <template v-slot:prepend>
+                      <q-icon name="search" />
+                    </template>
+                    <template v-if="search" v-slot:append>
+                      <q-icon name="cancel" @click.stop="getOriginal" class="cursor-pointer" />
+                    </template>
+                  </q-input>
+                </div>
                 <q-space></q-space>
                 <div class="col-1 items-center flex flex-center">
                   <q-btn-dropdown size="16px" color="white text-indigo-10" dropdown-icon="tune">
@@ -63,7 +68,7 @@
       <div class="col-md-12 col-xs-12 col-lg-12">
         <div class="row">
           <div class="col-auto">
-            <div class="left blue"></div>
+            <!-- <div class="left blue"></div> -->
           </div>
           <div class="col">
             <q-banner inline-actions class="text-blue-grey-14">
@@ -77,63 +82,153 @@
       <div class="column ">
         <div class="row">
           <div
-            v-for="i in 10"
-            :key="i"
+            v-if="this.data.length <= 0"
+            class="absolute-center">
+            <div class="column flex flex-center">
+              <q-icon name="report_problem" color="grey-7" size="5rem"></q-icon>
+              <div class="text-h6 text-grey-7 text-center">Data Barang Tidak Ditemukan</div>
+            </div>
+          </div>
+          <div
+            v-for="d in data"
+            :key="d._id"
             class="col-xs-12 col-md-2 q-pl-sm q-pb-sm q-pr-sm q-pt-sm">
             <div
               clickable
-              @click="dialog = true"
+              @click="openDetail(d)"
               class="row q-pa-sm card">
               <div class="flex flex-center col-xs-4 col-md-12">
                 <q-img
                   style="width: 100px; height: 100px"
-                  src="https://s2.bukalapak.com/img/76225256052/s-463-463/data.png.webp"/>
+                  :src="`${this.$baseImage}/${d.image[0]}`"/>
               </div>
               <div class="col-xs-8 col-md-12 q-pl-sm q-pt-sm">
                 <span class="text-h6 text-weight-bolder" style="color: #000046;">
-                  Beras Radja Udang
+                 {{ d.namaBarang }}
                 </span>
                 <br>
                 <span class="text-h6 text-weight-bold" style="color: #383E58;">
-                  Rp.50.000,00
+                  Rp.{{ d.hargaBarang }},00
                 </span>
                 <br>
                 <q-icon
                   name="location_city"
                   style="color: #AEAEAE;"></q-icon>
                 <span class="text-caption" style="color: #AEAEAE;">
-                  PT. Pencari Cinta Sejati
+                  {{ d.pemilik }}
                 </span>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <q-dialog v-model="dialogdesktop">
+        <q-card style="width: 700px; max-width: 80vw; border-radius: 20px">
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h5 q-pl-md text-weight-medium">
+              {{ activeData.namaBarang }}
+            </div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section>
+            <div class="row">
+              <div class="col q-ma-md">
+                <q-img
+                style="width: 100%; height: 100%; border-style: solid; border-width: 2.5px; border-radius: 10px"
+                :src="`${this.$baseImage}/${activeData.image[0]}`"/>
+                <br>
+              </div>
+              <div class="col">
+                <div class="q-pt-md q-pl-md carddialog">
+                  <div class="text-h5 text-weight-medium">
+                    Rp. {{ activeData.hargaBarang}},00
+                  </div>
+                  <div class="q-pt-sm">
+                    <span class="text-weight-medium">Deskripsi : </span>
+                    <br>
+                    {{ activeData.deskripsi }}
+                  </div>
+                  <div class="q-pt-sm text-weight-medium">
+                    Tersedia di :
+                  </div>
+                  <div class="q-pt-sm">
+                    <div class="col no-wrap">
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.shoppe}`">
+                        <q-avatar>
+                          <img src="~assets/shopper.png">
+                        </q-avatar>
+                      </q-btn>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.lazada}`">
+                        <q-avatar>
+                          <img src="~assets/lazada.png">
+                        </q-avatar>
+                      </q-btn>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.tokopedia}`">
+                        <q-avatar>
+                          <img src="~assets/tokopedia.png">
+                        </q-avatar>
+                      </q-btn>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.lazada}`">
+                        <q-avatar>
+                          <img src="~assets/blibli.png">
+                        </q-avatar>
+                      </q-btn>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
       <q-dialog
+        v-touch-pan.mouse="handlePan"
+        class="cursor-pointer"
         v-model="dialog"
         persistent
         maximized
         transition-show="slide-up"
-        transition-hide="slide-down"
-      >
+        transition-hide="slide-down">
         <q-card style="color: #555555">
           <!-- <q-header class="q-pt-sm bg-white row flex flex-center"> -->
             <div class="flex flex-center">
-              <q-btn flat color="primary" icon="keyboard_double_arrow_down" v-close-popup/>
+              <q-btn flat color="primary full-width" icon="keyboard_double_arrow_down"  v-close-popup/>
             </div>
           <!-- </q-header> -->
-          <div class="row" style="background-image: linear-gradient(238.14deg, #FFFFFF 24.95%, #C5D7BD 100%);">
-            <div class="col-xs-12 col-md-6">
+          <div class="row">
+            <div class="col-xs-12 col-md-6 q-pa-md">
               <q-img
-                src="https://s2.bukalapak.com/img/76225256052/s-463-463/data.png.webp"/>
+                style="height: 300px"
+                :src="`${this.$baseImage}/${activeData.image[0]}`"/>
             </div>
             <div class="col-xs-12 col-md-6">
               <div class="q-pt-md q-pl-md carddialog">
-                <div class="text-h5 text-weight-medium">Beras Raja Udang</div>
+                <div class="text-h5 text-weight-medium">
+                  {{ activeData.namaBarang }}
+                  <br>
+                  Rp. {{ activeData.hargaBarang}},00</div>
                 <div class="q-pt-sm">
                   <span class="text-weight-medium">Deskripsi : </span>
                   <br>
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Laudantium nihil possimus, nam magni optio inventore reiciendis explicabo a sed quod earum! Vel veniam, ipsa repellendus enim quis quam voluptates eum.
+                  {{ activeData.deskripsi }}
                 </div>
                 <div class="q-pt-sm text-weight-medium">
                   Tersedia di :
@@ -144,22 +239,38 @@
                     class="flex flex-center"
                     style="width: 90%; height: 90px;">
                     <div class="row no-wrap q-gutter-sm">
-                      <q-btn flat>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.shoppe}`">
                         <q-avatar>
                           <img src="~assets/shopper.png">
                         </q-avatar>
                       </q-btn>
-                      <q-btn flat>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.lazada}`">
                         <q-avatar>
                           <img src="~assets/lazada.png">
                         </q-avatar>
                       </q-btn>
-                      <q-btn flat>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.tokopedia}`">
                         <q-avatar>
                           <img src="~assets/tokopedia.png">
                         </q-avatar>
                       </q-btn>
-                      <q-btn flat>
+                      <q-btn
+                        flat
+                        type="a"
+                        target="_blank"
+                        :href="`${activeData.link.lazada}`">
                         <q-avatar>
                           <img src="~assets/blibli.png">
                         </q-avatar>
@@ -181,7 +292,68 @@ export default {
   data () {
     return {
       dialog: false,
-      search: ''
+      dialogdesktop: false,
+      search: '',
+      data: [],
+      original: [],
+      activeData: [],
+      info: null,
+      paining: null
+    }
+  },
+  created () {
+    // console.log(this.$token())
+    this.getData()
+  },
+  methods: {
+    getOriginal () {
+      this.search = ''
+      this.data = this.original
+    },
+    openDetail (data) {
+      // console.log(data)
+      this.activeData = data
+      if (this.$q.screen.lt.sm) {
+        this.dialog = true
+      } else {
+        this.dialogdesktop = true
+      }
+    },
+    getData () {
+      this.$api.get('barang/dataBarang')
+        .then((res) => {
+          if (res.data.sukses) {
+            // console.log(res)
+            this.data = this.original = res.data.data
+          } else {
+            this.$showNotif(res.data.pesan, 'negative')
+          }
+        })
+    },
+    getBarangbySearch () {
+      this.$q.loading.show()
+      this.data = this.original.filter(r => {
+        return r.namaBarang.toLowerCase().includes(this.search.toLowerCase())
+      })
+      this.$q.loading.hide()
+      // console.log(this.data)
+    },
+    ToAdmin () {
+      this.$router.push({ name: 'loginPage' })
+    },
+    handlePan ({ evt, ...newInfo }) {
+      this.info.value = newInfo
+
+      // native Javascript event
+      // console.log(evt)
+
+      if (newInfo.isFirst) {
+        this.panning.value = true
+      } else if (newInfo.isFinal) {
+        this.panning.value = false
+      }
+
+      // console.log(this.info)
     }
   }
 }
@@ -208,7 +380,7 @@ export default {
 .carddialog {
   /* margin-top: -20px; */
   height: 100%;
-  border-radius: 30px 30px 0px 0px;
+  /* border-radius: 30px 30px 0px 0px; */
   background: #FFFFFF;
   /* background-image: linear-gradient(238.14deg, #FFFFFF 24.95%, #C5D7BD 100%); */
 }

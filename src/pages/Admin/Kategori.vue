@@ -8,22 +8,22 @@
           </div>
           <div class="col">
             <q-banner inline-actions class="text-blue-grey-14">
-              <div class="text-h6 text-bold">Data Barang</div>
-              <div>Data Katalog Barang Anda</div>
+              <div class="text-h6 text-bold">Kategori</div>
+              <div>Data Kategori Anda</div>
             </q-banner>
           </div>
         </div>
       </div>
       <q-space></q-space>
       <div class="items-center flex flex-center">
-        <q-btn :to="{ name: 'inputData' }" class="q-pa-sm" dense label="Input Barang" icon="add" color="primary"></q-btn>
+        <q-btn @click="input = true" class="q-pa-sm" dense label="Tambah Kategori" icon="add" color="primary"></q-btn>
       </div>
     </div>
     <q-table
       hide-bottom
       :rows="data"
       :columns="columns"
-      row-key="namaBarang"
+      row-key="_id"
       selection="multiple"
       v-model:selected="selected"
       :filter="filter"
@@ -46,10 +46,11 @@
           <q-card :class="props.selected ? 'bg-grey-2' : ''">
             <q-card-section class="row">
               <q-checkbox dense v-model="props.selected" />
+              <q-item-label class="q-pl-sm flex flex-center">{{ props.row.Kategori }}</q-item-label>
               <q-space />
               <q-btn
                 icon="edit"
-                :to="{ name: 'editData', params: {id: props.row._id} }"
+                @click="editData(props.row)"
                 :color="props.selected ? 'grey-10' : 'amber'"
                 dense
                 flat
@@ -62,22 +63,44 @@
                 flat
                 :disable="props.selected ? true : false" />
             </q-card-section>
-            <q-separator />
-            <q-card-section>
-              <q-img
-                style="height:100px"
-                :src="`${this.$baseImage}/${props.row.image[0]}`"></q-img>
-            </q-card-section>
-            <div
-              class="column q-px-md q-pb-sm">
-              <q-item-label class="text-h5">{{ props.row.namaBarang }}</q-item-label>
-              <q-item-label caption>{{ props.row.pembuat }}</q-item-label>
-              <q-item-label class="text-subtitle2 text-weight-bold">Rp. {{ props.row.hargaBarang }}</q-item-label>
-            </div>
           </q-card>
         </div>
       </template>
     </q-table>
+    <q-dialog v-model="edit" full-width persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section class="row">
+          <div class="text-h6">Edit Kategori</div>
+          <q-space></q-space>
+          <q-btn flat icon="close" @click="getdata()" dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input dense v-model="activeData.Kategori" persistent label="Nama Kategori" autofocus @keyup.enter="editKategori()" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Edit Kategori" @click="editKategori()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="input" persistent>
+      <q-card style="min-width: 350px">
+        <q-card-section class="row">
+          <div class="text-h6">Input Kategori</div>
+          <q-space></q-space>
+          <q-btn flat icon="close" dense v-close-popup />
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input dense v-model="kategori" persistent label="Nama Kategori" autofocus @keyup.enter="inputKategori()" />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Input Kategori" @click="inputKategori()"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     <div class="q-pa-lg text-white">a</div>
     <q-footer reveal >
       <div
@@ -101,22 +124,24 @@
 export default {
   data () {
     return {
+      edit: false,
+      input: false,
       confirm: false,
       selected: [],
+      kategori: '',
       filter: '',
       columns: [
         {
-          name: 'namaBarang',
+          name: 'Kategori',
           required: true,
-          label: 'Nama Produk',
+          label: 'Nama Kategori',
           align: 'left',
-          field: row => row.namaBarang,
+          field: row => row.Kategori,
           format: val => `${val}`,
           sortable: true
-        },
-        { name: 'hargaBarang', align: 'left', label: 'Harga', field: 'hargaBarang', sortable: true }
+        }
       ],
-
+      activeData: [],
       data: []
     }
   },
@@ -126,42 +151,50 @@ export default {
     this.getdata()
   },
   methods: {
-    deleteSelected () {
-      let success = 0
-      // console.log(this.selected.length)
-      this.$q.dialog({
-        title: 'Konfirmasi',
-        message: 'Apakah Anda Yakin Menghapus ' + this.selected.length + ' Item Ini ?',
-        cancel: true,
-        persistent: true
-      }).onOk(() => {
-        for (const i in this.selected) {
-          // console.log(i)
-          this.$q.loading.show()
-          this.$api.delete(`barang/deleteBarang/${this.selected[i]._id}`, this.$token())
-            .then(res => {
-              if (res.data.sukses) {
-                success = success + 1
-                // this.$showNotif(res.data.pesan, 'positive')
-                this.getdata()
-              } else if (res.data === 'invalid token') {
-                this.$showNotif(res.data.pesan, 'negative')
-              }
-            })
+    editData (data) {
+      this.activeData = data
+      this.edit = true
+    },
+    inputKategori () {
+      // console.log(this.kategori)
+      this.$api.post('kategori/input', {
+        Kategori: this.kategori
+      }, this.$token()).then((res) => {
+        // console.log(res)
+        if (res.data.sukses) {
+          this.$showNotif(res.data.pesan, 'positive')
+          this.getdata()
+          this.input = false
+          this.kategori = ''
+        } else {
+          this.$showNotif(res.data.pesan, 'negative')
         }
-        this.$q.loading.hide()
-        this.$showNotif('Berhasil Menghapus', 'positive')
-        this.selected = []
       })
     },
+    editKategori () {
+      this.$api.put(`kategori/edit/${this.activeData._id}`, {
+        Kategori: this.activeData.Kategori
+      }, this.$token())
+        .then((res) => {
+          // console.log(res)
+          if (res.data.sukses) {
+            this.$showNotif(res.data.pesan, 'positive')
+            this.getdata()
+            this.edit = false
+          } else {
+            this.$showNotif(res.data.pesan, 'negative')
+          }
+        })
+    },
     deleteData (id) {
+      // console.log(id)
       this.$q.dialog({
         title: 'Konfirmasi',
         message: 'Apakah Anda Yakin?',
         cancel: true,
         persistent: true
       }).onOk(() => {
-        this.$api.delete(`barang/deleteBarang/${id}`, this.$token())
+        this.$api.delete(`kategori/hapus/${id}`, this.$token())
           .then(res => {
             if (res.data.sukses) {
               this.$showNotif(res.data.pesan, 'positive')
@@ -172,12 +205,44 @@ export default {
           })
       })
     },
+    deleteSelected () {
+      let success = 0
+      // console.log(success)
+      // console.log(panjangarray)
+      this.$q.dialog({
+        title: 'Konfirmasi',
+        message: 'Apakah Anda Yakin Menghapus ' + this.selected.length + ' Item Ini ?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        for (const i in this.selected) {
+          this.$q.loading.show()
+          this.$api.delete(`kategori/hapus/${this.selected[i]._id}`, this.$token())
+            .then(res => {
+              // console.log(res)
+              if (res.data.sukses) {
+                success = success + 1
+                // console.log(success)
+                // this.$showNotif(res.data.pesan, 'positive')
+                this.getdata()
+              } else if (res.data === 'invalid token') {
+                this.$showNotif(res.data.pesan, 'negative')
+              }
+            })
+        }
+        this.selected = []
+        this.$q.loading.hide()
+        this.$showNotif('Berhasil Menghapus', 'positive')
+      })
+    },
     getdata () {
-      this.$api.get('barang/dataBarang')
+      this.$api.get('kategori/dataKategori', this.$token())
         .then((res) => {
           if (res.data.sukses) {
             this.data = res.data.data
             // console.log(this.data)
+          } else if (res.status === 404) {
+            this.$router.push({ name: 'login' })
           } else {
             this.$showNotif(res.data.pesan, 'Negative')
           }

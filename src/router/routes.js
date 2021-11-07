@@ -1,24 +1,30 @@
 
 const routes = [
   {
-    path: '/', name: 'homeuser', component: () => import('pages/User/DashboardUser.vue')
+    path: '/',
+    name: 'homeuser',
+    component: () => import('pages/User/DashboardUser.vue')
   },
-  {
-    path: '/home', name: 'home', component: () => import('pages/User/Dashboard.vue')
-  },
-  {
-    path: '/login', name: 'login', component: () => import('pages/Guest/LoginAdmin.vue')
-  },
-  // {
-  //   path: '/admin', name: 'admin', component: () => import('pages/Admin/DashboardAdmin.vue')
-  // },
   {
     path: '/',
+    meta: {
+      authAdmin: true
+    },
     component: () => import('layouts/AdminLayout.vue'),
     children: [
-      { path: 'admin', name: 'login', component: () => import('pages/Admin/DashboardAdmin.vue') },
-      { path: 'input', name: 'register', component: () => import('pages/Admin/InputData.vue') }
+      { path: 'admin', name: 'homeadmin', component: () => import('pages/Admin/DashboardAdmin.vue') },
+      { path: 'input', name: 'inputData', component: () => import('pages/Admin/InputData.vue') },
+      { path: 'edit/:id', name: 'editData', component: () => import('pages/Admin/EditData.vue') },
+      { path: 'kategori', name: 'kategori', component: () => import('src/pages/Admin/Kategori.vue') }
+      // { path: 'edit/:id', name: 'editData', component: () => import('pages/Admin/EditData.vue') },
+      // { path: 'edit/:id', name: 'editData', component: () => import('pages/Admin/EditData.vue') },
+      // { path: 'edit/:id', name: 'editData', component: () => import('pages/Admin/EditData.vue') }
     ]
+  },
+  {
+    path: '/login',
+    name: 'loginPage',
+    component: () => import('pages/Guest/LoginAdmin.vue')
   },
 
   // Always leave this as last one,

@@ -1,5 +1,6 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
+import { LocalStorage } from 'quasar'
 import routes from './routes'
 
 /*
@@ -24,6 +25,27 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE)
+  })
+
+  Router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.authAdmin)) {
+      if (LocalStorage.getItem('dataUser') == null || LocalStorage.getItem('dataUser') === 'undefined') {
+        next({
+          name: 'loginPage'
+        })
+      } else {
+        const dataSession = LocalStorage.getItem('dataUser')
+        if (dataSession.level === 1) {
+          next()
+        } else {
+          next({
+            name: 'homeuser'
+          })
+        }
+      }
+    } else {
+      next()
+    }
   })
 
   return Router

@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
+import token from './token'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -7,10 +8,13 @@ import axios from 'axios'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'https://api.example.com' })
+const api = axios.create({ baseURL: 'http://192.168.1.12:4001/' })
+const baseImage = 'http://192.168.1.12:4001/image'
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
+
+  app.config.globalProperties.$baseImage = baseImage
 
   app.config.globalProperties.$axios = axios
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
@@ -19,6 +23,7 @@ export default boot(({ app }) => {
   app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
+  app.config.globalProperties.$token = token
 })
 
-export { api }
+export { api, axios, baseImage, token }

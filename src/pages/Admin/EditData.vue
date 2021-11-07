@@ -8,8 +8,8 @@
           </div>
           <div class="col">
             <q-banner inline-actions class="text-blue-grey-14">
-              <div class="text-h6 text-bold">Input Barang</div>
-              <div>Input Data Barang Terbaru</div>
+              <div class="text-h6 text-bold">Edit Barang</div>
+              <div>Edit Data Barang</div>
             </q-banner>
           </div>
         </div>
@@ -38,8 +38,6 @@
             type="number"
             v-model="form.hargaBarang"
             label="hargaBarang"
-            lazy-rules
-            :rules="[ val => val && val.length > 0 || 'Please type something']"
           >
             <template v-slot:prepend>
               <div class="text-subtitle2">Rp.</div>
@@ -121,34 +119,18 @@
       </q-form>
       </q-card-section>
     </q-card>
-    <q-dialog v-model="alert">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Alert</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          Kategori Tidak Tersedia, Silahkan isi Kategori Terlebih Dahulu
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="OK" :to="{ name: 'kategori' }" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 <script>
 export default {
   data () {
     return {
-      alert: false,
       form: {
         namaBarang: null,
-        hargaBarang: 0,
-        pemilik: null,
+        hargaBarang: null,
         jenisBarang: null,
-        deskripsi: null
+        deskripsi: null,
+        pemilik: null
       },
       link: {
         blibli: null,
@@ -165,24 +147,43 @@ export default {
     }
   },
   created () {
+    this.getData()
     this.getKategori()
   },
   methods: {
     getKategori () {
       this.$api.get('kategori/dataKategori', this.$token())
         .then((res) => {
+          console.log(res)
           if (res.data.sukses) {
             const data = res.data.data
-            console.log(data.length)
-            if (data.length !== 0) {
+            if (data.length !== 0 || data !== null) {
               this.optiongenre = []
               let i = 0
               for (i in data) {
                 this.optiongenre.push(data[i].Kategori)
               }
-            } else {
-              this.alert = true
             }
+            console.log(this.optiongenre)
+          }
+        })
+    },
+    getData () {
+      this.$api.get('barang/dataBarang/' + this.$route.params.id, this.$token())
+        .then((res) => {
+          console.log(res)
+          if (res.data.sukses) {
+            const data = res.data.data
+            this.form.namaBarang = data.namaBarang
+            this.form.hargaBarang = data.hargaBarang
+            this.form.jenisBarang = data.jenisBarang
+            this.form.deskripsi = data.deskripsi
+            this.form.pemilik = data.pemilik
+            this.link = data.link
+          } else if (res.data === 'invalid token') {
+            // this.$router.push({ name: 'login' })
+          } else {
+            console.log(res.data)
           }
         })
     },
@@ -191,22 +192,26 @@ export default {
         link: this.link
       })
       const formData = new FormData()
-      console.log(this.image)
-      for (const i of Object.keys(this.image)) {
-        formData.append('image', this.image[i])
+      // console.log(this.image)
+      if (this.image !== null) {
+        for (const i of Object.keys(this.image)) {
+          formData.append('image', this.image[i])
+        }
+      } else {
+        formData.append('image', this.image)
       }
       formData.append('data', JSON.stringify(formBara))
       // formData.append('link', JSON.stringify(this.link))
-      console.log(formData)
-      console.log(this.$token().headers)
-      this.$api.post('barang/input', formData, this.$token())
+      // console.log(formData)
+      // console.log(this.$token().headers)
+      this.$api.put('barang/editBarang/' + this.$route.params.id, formData, this.$token())
         .then(res => {
           console.log(res)
           if (res.data.sukses) {
             this.$showNotif(res.data.pesan, 'positive')
             this.$router.push({ name: 'homeadmin' })
           } else if (res.data === 'invalid token') {
-            // this.$router.push({ name: 'login' })
+            this.$router.push({ name: 'login' })
           } else {
             this.$showNotif(res.data.pesan, 'negative')
           }

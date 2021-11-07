@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
-        <q-toolbar-title class="text-h6 text-bold">Farmer's Warehouse</q-toolbar-title>
+        <q-toolbar-title class="text-h6 text-bold">Admin Farmer's Warehouse</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -40,9 +40,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            class="fixed-bottom"
-            active-class="bg-primary text-white"
-            style="color: #03AC0E;"
+            class="absolute-bottom text-primary"
             @click="logout()"
             clickable>
             <q-item-section avatar>
@@ -71,19 +69,13 @@ export default {
         {
           label: 'Data Barang',
           icon: 'assessment',
-          to: { name: 'databarang' },
+          to: { name: 'homeadmin' },
           drawer: false
         },
         {
-          label: 'Data User',
-          icon: 'group',
-          to: { name: 'datauser' },
-          drawer: false
-        },
-        {
-          label: 'Data Transaksi',
-          icon: 'payments',
-          to: { name: 'datatransaksi' },
+          label: 'Data Kategori',
+          icon: 'label',
+          to: { name: 'kategori' },
           drawer: false
         }
       ]
@@ -91,9 +83,9 @@ export default {
   },
   methods: {
     logout () {
-      console.log('yeashh')
+      // console.log('yeashh')
       this.$q.localStorage.clear()
-      this.$router.push({ name: 'login' })
+      this.$router.push({ name: 'loginPage' })
     }
   }
 }
