@@ -20,15 +20,16 @@
       </div>
     </div>
     <q-table
-      hide-bottom
       :rows="data"
       :columns="columns"
       row-key="namaBarang"
       selection="multiple"
       v-model:selected="selected"
       :filter="filter"
+      :rows-per-page-options="[0]"
       grid
       hide-header
+      hide-bottom
     >
       <template v-slot:top>
         <q-input outlined style="width: 100%" dense debounce="200" v-model="filter" placeholder="Search">
@@ -175,6 +176,7 @@ export default {
     getdata () {
       this.$api.get('barang/dataBarang')
         .then((res) => {
+          console.log(res)
           if (res.data.sukses) {
             this.data = res.data.data
             // console.log(this.data)

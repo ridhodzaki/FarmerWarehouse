@@ -231,8 +231,9 @@ export default {
             })
         }
         this.selected = []
+        this.getdata()
         this.$q.loading.hide()
-        this.$showNotif('Berhasil Menghapus', 'positive')
+        // this.$showNotif('Berhasil Menghapus', 'positive')
       })
     },
     getdata () {
