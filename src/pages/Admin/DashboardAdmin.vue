@@ -79,7 +79,7 @@
         </div>
       </template>
     </q-table>
-    <div class="q-pa-lg text-white">a</div>
+    <div :class="this.$q.dark.isActive ? 'q-pa-lg text-black' : 'q-pa-lg text-white'">a</div>
     <q-footer reveal >
       <div
         v-if="this.selected.length > 0"
