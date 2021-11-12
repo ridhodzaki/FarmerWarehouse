@@ -38,21 +38,20 @@
                 <div class="col-1 items-center flex flex-center">
                   <q-btn-dropdown size="16px" color="white text-indigo-10" dropdown-icon="tune">
                     <q-list>
-                      <q-item clickable v-close-popup >
+                      <q-item @click="getKategori('all')" clickable v-close-popup >
                         <q-item-section>
-                          <q-item-label>Beras</q-item-label>
+                          <q-item-label>Semua</q-item-label>
                         </q-item-section>
                       </q-item>
 
-                      <q-item clickable v-close-popup >
+                      <q-item
+                        v-for="k in kategori"
+                        :key="k._id"
+                        @click="getKategori(k.Kategori)"
+                        clickable
+                        v-close-popup>
                         <q-item-section>
-                          <q-item-label>Sayur</q-item-label>
-                        </q-item-section>
-                      </q-item>
-
-                      <q-item clickable v-close-popup>
-                        <q-item-section>
-                          <q-item-label>Buah</q-item-label>
+                          <q-item-label>{{ k.Kategori }}</q-item-label>
                         </q-item-section>
                       </q-item>
                     </q-list>
@@ -83,7 +82,7 @@
         <div class="row">
           <div
             v-if="this.data.length <= 0"
-            class="absolute-center">
+            class="col-12">
             <div class="column flex flex-center">
               <q-icon name="report_problem" color="grey-7" size="5rem"></q-icon>
               <div class="text-h6 text-grey-7 text-center">Data Barang Tidak Ditemukan</div>
@@ -99,7 +98,7 @@
               class="row q-pa-sm card">
               <div class="flex flex-center col-xs-4 col-md-12">
                 <q-img
-                  style="width: 100px; height: 100px"
+                  style="width: 100%; height: 100px"
                   :src="`${this.$baseImage}/${d.image[0]}`"/>
               </div>
               <div class="col-xs-8 col-md-12 q-pl-sm q-pt-sm">
@@ -297,15 +296,28 @@ export default {
       data: [],
       original: [],
       activeData: [],
+      kategori: [],
       info: null,
       paining: null
     }
   },
   created () {
-    // console.log(this.$token())
+    console.log(this.$q.cookies.get('xs'))
     this.getData()
   },
   methods: {
+    getKategori (jenis) {
+      if (jenis === 'all') {
+        this.data = this.original
+      } else {
+        this.data = []
+        for (const i in this.original) {
+          if (this.original[i].jenisBarang === jenis) {
+            this.data.push(this.original[i])
+          }
+        }
+      }
+    },
     getOriginal () {
       this.search = ''
       this.data = this.original
@@ -325,6 +337,14 @@ export default {
           if (res.data.sukses) {
             // console.log(res)
             this.data = this.original = res.data.data
+          } else {
+            this.$showNotif(res.data.pesan, 'negative')
+          }
+        })
+      this.$api.get('kategori/dataKategori')
+        .then((res) => {
+          if (res.data.sukses) {
+            this.kategori = res.data.data
           } else {
             this.$showNotif(res.data.pesan, 'negative')
           }

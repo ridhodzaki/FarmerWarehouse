@@ -8,8 +8,8 @@ import token from './token'
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'http://192.168.1.12:4001/' })
-const baseImage = 'http://192.168.1.12:4001/image'
+const api = axios.create({ baseURL: 'http://192.168.1.48:4001/' })
+const baseImage = 'http://192.168.1.48:4001/image'
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

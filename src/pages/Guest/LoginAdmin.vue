@@ -64,6 +64,7 @@ export default {
       }).then((res) => {
         if (res.data.sukses) {
           this.$q.localStorage.set('dataUser', res.data.data)
+          this.$q.cookies.set('data', res.data.data)
           // console.log(res.data.data.level)
           // console.log(this.$q.localStorage.getItem('dataUser'))
           if (res.data.data.level === 1) {
