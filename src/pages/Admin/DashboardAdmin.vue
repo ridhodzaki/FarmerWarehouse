@@ -146,11 +146,13 @@ export default {
                 // this.$showNotif(res.data.pesan, 'positive')
                 this.getdata()
               } else if (res.data === 'invalid token') {
-                this.$showNotif(res.data.pesan, 'negative')
+                this.$showDialog(res.data, 'negative')
+                this.$router.push({ name: 'loginPage' })
               }
             })
         }
         this.$q.loading.hide()
+        this.getData()
         this.$showNotif('Berhasil Menghapus', 'positive')
         this.selected = []
       })
@@ -168,6 +170,9 @@ export default {
               this.$showNotif(res.data.pesan, 'positive')
               this.getdata()
             } else if (res.data === 'invalid token') {
+              this.$showDialog(res.data, 'negative')
+              this.$router.push({ name: 'loginPage' })
+            } else {
               this.$showNotif(res.data.pesan, 'negative')
             }
           })
@@ -180,9 +185,15 @@ export default {
           if (res.data.sukses) {
             this.data = res.data.data
             // console.log(this.data)
+          } else if (res.data === 'invalid token') {
+            this.$showDialog(res.data, 'negative')
+            this.$router.push({ name: 'loginPage' })
           } else {
-            this.$showNotif(res.data.pesan, 'Negative')
+            this.$showNotif(res.data.pesan, 'negative')
           }
+        })
+        .catch((err) => {
+          console.log(err)
         })
     }
   }

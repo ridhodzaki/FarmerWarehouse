@@ -181,6 +181,7 @@ export default {
             this.form.pemilik = data.pemilik
             this.link = data.link
           } else if (res.data === 'invalid token') {
+            this.$showDialog()
             // this.$router.push({ name: 'login' })
           } else {
             console.log(res.data)
@@ -211,7 +212,8 @@ export default {
             this.$showNotif(res.data.pesan, 'positive')
             this.$router.push({ name: 'homeadmin' })
           } else if (res.data === 'invalid token') {
-            this.$router.push({ name: 'login' })
+            this.$showDialog(res.data, 'negative')
+            this.$router.push({ name: 'loginPage' })
           } else {
             this.$showNotif(res.data.pesan, 'negative')
           }

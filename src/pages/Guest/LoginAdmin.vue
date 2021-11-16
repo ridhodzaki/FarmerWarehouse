@@ -72,6 +72,8 @@ export default {
           } else {
             this.$router.push({ name: 'login' })
           }
+        } else {
+          this.$showNotif(res.data.pesan, 'negative')
         }
       })
       // this.$router.push({ name: 'homeadmin' })

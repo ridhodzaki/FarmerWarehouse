@@ -25,6 +25,7 @@ module.exports = configure(function (ctx) {
       // 'i18n',
       'axios',
       'showNotif',
+      'showDialog',
       // 'getHeader',
       // 'auth',
       'token'

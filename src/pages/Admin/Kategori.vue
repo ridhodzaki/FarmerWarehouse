@@ -159,17 +159,20 @@ export default {
       // console.log(this.kategori)
       this.$api.post('kategori/input', {
         Kategori: this.kategori
-      }, this.$token()).then((res) => {
-        // console.log(res)
-        if (res.data.sukses) {
-          this.$showNotif(res.data.pesan, 'positive')
-          this.getdata()
-          this.input = false
-          this.kategori = ''
-        } else {
-          this.$showNotif(res.data.pesan, 'negative')
-        }
-      })
+      }, this.$token())
+        .then((res) => {
+          if (res.data.sukses) {
+            this.$showNotif(res.data.pesan, 'positive')
+            this.getdata()
+            this.input = false
+            this.kategori = ''
+          } else if (res.data === 'invalid token') {
+            this.$showNotif(res.data, 'negative')
+            this.$router.push({ name: 'loginPage' })
+          } else {
+            this.$showNotif(res.data.pesan, 'negative')
+          }
+        })
     },
     editKategori () {
       this.$api.put(`kategori/edit/${this.activeData._id}`, {
@@ -239,6 +242,7 @@ export default {
     getdata () {
       this.$api.get('kategori/dataKategori', this.$token())
         .then((res) => {
+          this.filter = ''
           if (res.data.sukses) {
             this.data = res.data.data
             // console.log(this.data)
@@ -247,6 +251,7 @@ export default {
           } else {
             this.$showNotif(res.data.pesan, 'Negative')
           }
+          this.filter = ''
         })
     }
   }

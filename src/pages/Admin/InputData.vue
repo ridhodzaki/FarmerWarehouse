@@ -206,6 +206,8 @@ export default {
             this.$showNotif(res.data.pesan, 'positive')
             this.$router.push({ name: 'homeadmin' })
           } else if (res.data === 'invalid token') {
+            this.$showDialog(res.data, 'negative')
+            this.$router.push({ name: 'loginPage' })
             // this.$router.push({ name: 'login' })
           } else {
             this.$showNotif(res.data.pesan, 'negative')
